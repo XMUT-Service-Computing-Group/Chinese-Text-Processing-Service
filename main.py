@@ -4,6 +4,7 @@ import tkinter.filedialog as tkf
 import tkinter.messagebox as tkm
 from tkinter import *
 
+import jieba
 import pandas
 from snownlp import SnowNLP
 
@@ -18,14 +19,15 @@ def select_csv():
 
 # 生成关键词文件
 def key_words(filename, limit, method):
+    text = []  # 储存关键词列数据
+    name = os.path.basename(filename).split('.')[0]  # 提取不包含后缀的文件名
+    data = pandas.read_csv(filename, index_col=0)  # 读取csv文件并不使用编号
     if method == 0:
-        text = []  # 储存关键词列数据
-        data = pandas.read_csv(filename, index_col=0)  # 读取csv文件并不使用编号
         for i in range(0, len(data)):
             text.append(SnowNLP(data.index[i]))  # 将data的第一列（index）数据转换为SnowNLP类型并添加到text数组中
             text[i] = text[i].keywords(limit)  # 将text数组中的数据进行关键词提取并覆盖到原位置
         data["关键词"] = text  # 将text数组作为新的一列添加到data中
-        data.to_csv(os.path.basename(filename).split('.')[0] + "Key.csv")  # 将data输出为读取的csv文件名加上Key的csv文件
+        data.to_csv("output/" + name + "Key.csv")  # 将data输出为读取的csv文件名加上Key的csv文件
         tkm.showinfo("成功！", "生成关键词文件成功！")
         return data
 
@@ -38,7 +40,7 @@ def sentiment_value(filename, method):
             text.append(SnowNLP(data.index[i]))  # 将data的第一列（index）数据转换为SnowNLP类型并添加到text数组中
             text[i] = text[i].sentiments  # 将text数组中的数据进行情绪值判断并覆盖到原位置
         data["情绪值"] = text  # 将text数组作为新的一列添加到data中
-        data.to_csv(os.path.basename(filename).split('.')[0] + "Sen.csv")  # 将data输出为读取的csv文件名加上Sen的csv文件
+        data.to_csv("output/" + name + "Sen.csv")  # 将data输出为读取的csv文件名加上Sen的csv文件
         tkm.showinfo("成功！", "生成情绪值文件成功！")
         return data
 
@@ -69,4 +71,3 @@ Entry(root, width=5, textvariable=SenMethod).grid(row=6, column=0, padx=5, pady=
 Label(root, text="生成模式，默认为0").grid(row=6, column=1, padx=5, pady=5)
 
 root.mainloop()
-
