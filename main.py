@@ -44,7 +44,7 @@ def sentiment_value(filename, method):
 
 
 root = tk.Tk()
-root.title("")
+root.title("CTPS")
 filepathLabel = tk.StringVar()
 keyLimit = tk.StringVar()
 keyMethod = tk.StringVar()
