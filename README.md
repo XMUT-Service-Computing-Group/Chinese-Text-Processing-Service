@@ -69,14 +69,3 @@ class Sentiment(object):
         words = normal.filter_stop(words)
         return words
 ```
-
-```python
-import jieba
-```
-
-The following messages indicates loading successfully when importing the jieba package:
-
-    Building prefix dict from the default dictionary ...
-    Loading model from cache C:\Users\xkz\AppData\Local\Temp\jieba.cache
-    Loading model cost 0.659 seconds.
-    Prefix dict has been built successfully.
