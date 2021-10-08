@@ -13,9 +13,9 @@ Purpose: to enhance its performance by introducing jieba and adding stopwords an
 
 1. Replace the stopwords.txt in the "normal" folder of the snownlp package with the one in this repo.
 2. Add the words.txt in this repo to the "sentiment" folder of the snownlp package.
-3. Adjust the code accordingly:
+3. Make slight modifications on two .py files in the snownlp package as follows:
 
-"__init__.py" in the snownlp folder
+> snownlp/\_\_init\_\_.py
 
 ```python
 import jieba  #导入jieba包
@@ -56,7 +56,7 @@ class SnowNLP(object):
         return ret
 ```
 
-"__init__.py" in the sentiment folder of the snownlp package:
+> snownlp/sentiment/\_\_init\_\_.py
 
 ```python
 import jieba  #导入jieba包
