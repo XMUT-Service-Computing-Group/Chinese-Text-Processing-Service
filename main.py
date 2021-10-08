@@ -33,9 +33,10 @@ def key_words(filename, limit, method):
 
 
 def sentiment_value(filename, method):
+    text = []  #储存情绪值列数据
+    name = os.path.basename(filename).split('.')[0]  # 提取不包含后缀的文件名
+    data = pandas.read_csv(filename, index_col=0)  # 读取csv文件并不使用编号
     if method == 0:
-        text = []  # 储存情绪值列数据
-        data = pandas.read_csv(filename, index_col=0)  # 读取csv文件并不使用编号
         for i in range(0, len(data)):
             text.append(SnowNLP(data.index[i]))  # 将data的第一列（index）数据转换为SnowNLP类型并添加到text数组中
             text[i] = text[i].sentiments  # 将text数组中的数据进行情绪值判断并覆盖到原位置
