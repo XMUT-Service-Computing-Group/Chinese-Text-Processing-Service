@@ -5,15 +5,17 @@ Owned by: Service Computing Research Group, School of Software Engineering, Xiam
 
 This service offers functions to conduct text processing for Simplified Chinese. The current version has functions to generate key words and sentiment scores for any given text dataset.
 
-通过增加停用词和用户自定义词库，优化snownlp分词效果，从而提升snownlp情感判断准确率。
+### Preparation 准备工作
 
-##### 1.增加停用词：
+#### Make changes to SnowNLP package 修改SnowNLP
+Purpose: to enhance its performance by introducing jieba and adding stopwords and a customised lexicon.
+目的：通过增加停用词和用户自定义词库，引入jieba分词，提升snownlp情感分析的准确率。
 
-对snownlp中-normal文件夹中-stopwords.txt进行补充
+1. Replace the stopwords.txt in the "normal" folder of the snownlp package with the one in this repo.
+2. Add the words.txt in this repo to the "sentiment" folder of the snownlp package.
+3. Adjust the code accordingly:
 
-##### 2.增加用户自定义词库：
-
-修改snownlp文件夹下的__init__.py ：
+"__init__.py" in the snownlp folder
 
 ```python
 import jieba  #导入jieba包
@@ -54,7 +56,7 @@ class SnowNLP(object):
         return ret
 ```
 
-修改snownlp中sentiment文件夹下的__init__.py ：
+"__init__.py" in the sentiment folder of the snownlp package:
 
 ```python
 import jieba  #导入jieba包
@@ -72,9 +74,9 @@ class Sentiment(object):
 import jieba
 ```
 
-导入jieba包时显示以下文字即是导入正常
+The following messages indicates loading successfully when importing the jieba package:
 
-Building prefix dict from the default dictionary ...
-Loading model from cache C:\Users\xkz\AppData\Local\Temp\jieba.cache
-Loading model cost 0.659 seconds.
-Prefix dict has been built successfully.
+    Building prefix dict from the default dictionary ...
+    Loading model from cache C:\Users\xkz\AppData\Local\Temp\jieba.cache
+    Loading model cost 0.659 seconds.
+    Prefix dict has been built successfully.
