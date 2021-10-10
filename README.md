@@ -1,34 +1,41 @@
 # Chinese-Text-Processing-Service
+
 Author: Kaixiang Lin, Weisi Chen
 
 Owned by: Service Computing Research Group, School of Software Engineering, Xiamen University of Technology
 
-This service offers functions to conduct text processing for Simplified Chinese. The current version has functions to generate key words and sentiment scores for any given text dataset.
+This service offers functions to conduct text processing for Simplified Chinese. The current version has functions to
+generate key words and sentiment scores for any given text dataset.
 
 ### Preparation 准备工作
 
 #### Make changes to SnowNLP package 修改SnowNLP
-Purpose: to enhance its performance by introducing jieba and adding stopwords and a customised lexicon.
+
+Purpose: to enhance its performance by introducing jieba and adding stopwords and a customised lexicon.  
 目的：通过增加停用词和用户自定义词库，引入jieba分词，提升snownlp情感分析的准确率。
 
-1. Replace the stopwords.txt in the "normal" folder of the snownlp package with the one in this repo.
-2. Add the words.txt in this repo to the "sentiment" folder of the snownlp package.
-3. Make slight modifications on two .py files in the snownlp package as follows:
+1. Replace the stopwords.txt in the "normal" folder of the snownlp package with the one in this repo.  
+   将snownlp包的“normal”文件夹中的stopwords.txt替换为此repo中的stopwords.txt。
+2. Add the words.txt in this repo to the "sentiment" folder of the snownlp package.   
+   将此repo中的words.txt添加到snownlp包的“sentiment”文件夹中。
+3. Make slight modifications on two .py files in the snownlp package as follows:  
+   对snownlp包中的两个.py文件进行如下轻微修改：
 
 > snownlp/\_\_init\_\_.py
 
 ```python
-import jieba  #导入jieba包
+import jieba  # Import Jieba package. 导入jieba包
 
 
 class SnowNLP(object):
     def words(self):
-        return jieba.lcut(self.doc)  # 替换为jieba的lcut方法
+        return jieba.lcut(self.doc)  # Replace with the lcut method of Jieba. 替换为jieba的lcut方法
+
     def summary(self, limit=5):
         doc = []
         sents = self.sentences
         for sent in sents:
-            words = jieba.lcut(sent)  # 替换为jieba的lcut方法
+            words = jieba.lcut(sent)  # Replace with the lcut method of Jieba. 替换为jieba的lcut方法
             words = normal.filter_stop(words)
             doc.append(words)
         rank = textrank.TextRank(doc)
@@ -42,7 +49,7 @@ class SnowNLP(object):
         doc = []
         sents = self.sentences
         for sent in sents:
-            words = jieba.lcut(sent)  # 替换为jieba的lcut方法
+            words = jieba.lcut(sent)  # Replace with the lcut method of Jieba. 替换为jieba的lcut方法
             words = normal.filter_stop(words)
             doc.append(words)
         rank = textrank.KeywordTextRank(doc)
@@ -59,13 +66,14 @@ class SnowNLP(object):
 > snownlp/sentiment/\_\_init\_\_.py
 
 ```python
-import jieba  #导入jieba包
-jieba.load_userdict('words.txt')  # 加载自定义词库(路径自定义)
+import jieba  # Import Jieba package. 导入jieba包
+
+jieba.load_userdict('words.txt')  # Load custom Thesaurus (path customization). 加载自定义词库(路径自定义)
 
 
 class Sentiment(object):
     def handle(self, doc):
-        words = jieba.lcut(doc)  # 替换为jieba的lcut方法
+        words = jieba.lcut(doc)  # Replace with the lcut method of Jieba. 替换为jieba的lcut方法
         words = normal.filter_stop(words)
         return words
 ```
