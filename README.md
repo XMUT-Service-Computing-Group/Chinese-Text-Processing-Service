@@ -69,9 +69,7 @@ class SnowNLP(object):
 import jieba  # Import Jieba package. 导入jieba包
 
 jieba.load_userdict(r'C:\Users\xkz\anaconda3\envs\python39\Lib\site-packages\snownlp\sentiment\words.txt')
-
-
-# Load custom Thesaurus (The path needs to be changed to where you put the words.txt file).  
+# Load custom Thesaurus (The path needs to be changed to where you put the words.txt file).
 # 加载自定义词库(路径需要修改成你放置words.txt文件的位置)
 
 
