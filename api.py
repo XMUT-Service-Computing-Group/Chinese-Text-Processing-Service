@@ -1,10 +1,15 @@
-from flask import Flask
+from flask import Flask, redirect
 
 import NLPfunctions
 
 app = Flask(__name__)
 # 处理中文编码
 app.config['JSON_AS_ASCII'] = False
+
+
+@app.route("/", methods=["GET"])
+def readme():
+    return redirect("https://github.com/XMUT-Service-Computing-Group/Chinese-Text-Processing-Service#readme", code=301)
 
 
 @app.route("/key_words", methods=["GET"])
