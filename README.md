@@ -86,23 +86,46 @@ class Sentiment(object):
 
 > input/
 
-​ The default folder for input files. 默认的存放输入文件的文件夹。
+​	 The default folder for input files. 默认的存放输入文件的文件夹。
 
 > ~~output/~~
 
- 		~~The default folder for output files.  默认的存放输出文件的文件夹。~~
+​	~~The default folder for output files.  默认的存放输出文件的文件夹。~~
 
 > training_data/
 
- 		The default folder for training data files.  默认的存放训练数据文件的文件夹。
+​	The default folder for training data files.  默认的存放训练数据文件的文件夹。
 
 > trained_model/
 
- 		The default folder for training model files.  默认的存放训练模型文件的文件夹。
+​	The default folder for training model files.  默认的存放训练模型文件的文件夹。
 
 Note: if you do not want to add input ~~and output files~~, it is also allowed, but the name parameter cannot be used in
 the URL. You need to use the path parameter and assign it to the path of the complete input ~~and output~~
 files (described in detail below).   
 注意：如果你不想添加input~~和output文件~~也是允许的，但在url中，name参数将无法使用，需要使用path参数，并将它赋值为完整的输入~~和输出~~文件的路径（以下将详细说明）。
 
-###   
+###  How to use 如何使用
+
+#### 1.函数
+
+| Method 方法        | Description 说明                                             |
+| ------------------ | :----------------------------------------------------------- |
+| key_words()        | Use the snownlp built-in method to get the keyword of the text.<br>使用snownlp内置方法获得文本的关键字 |
+| sentiment_train()  | Use the snownlp built-in method to train the model that generates sentiment score.<br>使用snownlp内置方法训练情绪值生成的模型 |
+| sentiment_scores() | generates sentiment score.<br>生成情绪值                     |
+
+#### 2.API调用
+
+| URL                                    | Description 说明                                             | parameter 参数                                               |
+| -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| http://127.0.0.1:5000/                 | Redirect to readme interface of GitHub.<br>重定向到github的README界面 |                                                              |
+| http://127.0.0.1:5000/key_words        | Generate keywords.<br>生成关键词                             | **path**<br>Absolute path of the file.<br>文件的绝对路径     |
+|                                        |                                                              | **name**<br/>Name of the file.<br/>文件的文件名              |
+|                                        |                                                              | **limit**<br/>Number limit of keywords.<br/>关键词的数量限制 |
+| http://127.0.0.1:5000/sentiment_train  | Training sentiment score generation model.<br/>训练情绪值生成模型 | **filename**<br/>File name of the training model.<br/>训练模型的文件名 |
+| http://127.0.0.1:5000/sentiment_scores | Generate sentiment score.<br/>生成情绪值                     | **path**<br>Absolute path of the file.<br>文件的绝对路径     |
+|                                        |                                                              | **name**<br/>Name of the file.<br/>文件的文件名              |
+|                                        |                                                              | **method**<br/>Generation mode of sentiment score.<br/>情绪值的生成模式 |
+|                                        |                                                              |                                                              |
+
