@@ -9,7 +9,7 @@ generate key words and sentiment scores for any given text dataset.
 
 ### Preparation 准备工作
 
-#### Make changes to SnowNLP package 修改SnowNLP
+#### 1.Make changes to SnowNLP package 修改SnowNLP
 
 Purpose: to enhance its performance by introducing jieba and adding stopwords and a customised lexicon.  
 目的：通过增加停用词和用户自定义词库，引入jieba分词，提升snownlp情感分析的准确率。
@@ -69,6 +69,8 @@ class SnowNLP(object):
 import jieba  # Import Jieba package. 导入jieba包
 
 jieba.load_userdict(r'C:\Users\xkz\anaconda3\envs\python39\Lib\site-packages\snownlp\sentiment\words.txt')
+
+
 # Load custom Thesaurus (The path needs to be changed to where you put the words.txt file).
 # 加载自定义词库(路径需要修改成你放置words.txt文件的位置)
 
@@ -79,3 +81,28 @@ class Sentiment(object):
         words = normal.filter_stop(words)
         return words
 ```
+
+#### 2.Add the following folder in the project root directory 在项目根目录添加如下文件夹
+
+> input/
+
+​ The default folder for input files. 默认的存放输入文件的文件夹。
+
+> ~~output/~~
+
+ 		~~The default folder for output files.  默认的存放输出文件的文件夹。~~
+
+> training_data/
+
+ 		The default folder for training data files.  默认的存放训练数据文件的文件夹。
+
+> trained_model/
+
+ 		The default folder for training model files.  默认的存放训练模型文件的文件夹。
+
+Note: if you do not want to add input ~~and output files~~, it is also allowed, but the name parameter cannot be used in
+the URL. You need to use the path parameter and assign it to the path of the complete input ~~and output~~
+files (described in detail below).   
+注意：如果你不想添加input~~和output文件~~也是允许的，但在url中，name参数将无法使用，需要使用path参数，并将它赋值为完整的输入~~和输出~~文件的路径（以下将详细说明）。
+
+###   

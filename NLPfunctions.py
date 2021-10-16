@@ -132,14 +132,16 @@ def sentiment_score(sentence):
 
 # 训练snownlp的情绪值模型（API）
 def sentiment_train():
-    # 获取传入的params参数
-    params = request.args.to_dict()
+    params = request.args.to_dict()  # 获取传入的params参数
+    # 判断是否自定义输出的模型文件名
     if params.get('filename') is None:
         filename = 'sentiment.marshal'
     else:
         filename = params.get('filename')
+    # 使用snownlp内置方法进行训练并导出模型
     sentiment.train(r'training_data/neg.csv', r'training_data/pos.csv')
     sentiment.save(r'trained_model/' + filename)
+    
     return "成功输出训练模型文件！"
 
 
@@ -150,14 +152,16 @@ def sentiment_scores():
     method = params.get('method')
     result_json = []
     data = get_data()
-    score = 0
+    # 判断返回的是否是错误文本信息
     if isinstance(data, str):
         return data
     for i in range(0, len(data)):
+        # 使用snownlp内置方法，可以使用sentiment_train进行训练
         if method == "1":
-            score = sentiment_score(data.index[i])
-        elif method == "2":
             score = SnowNLP(data.index[i]).sentiments
+        # 使用词典
+        elif method == "2":
+            score = sentiment_score(data.index[i])
         elif method is None:
             return "参数缺失"
         temp = {'key': data.index[i], 'score': score}

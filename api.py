@@ -19,7 +19,7 @@ def sentiment_scores():
 
 @app.route("/sentiment_train", methods=["GET"])
 def sentiment_train():
-    return NLPfunctions.train_model()
+    return NLPfunctions.sentiment_train()
 
 
 if __name__ == "__main__":
