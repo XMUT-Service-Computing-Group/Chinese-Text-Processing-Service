@@ -1,55 +1,147 @@
 # **coding:utf-8**
-import os
-import tkinter.filedialog as tkf
-from tkinter import *
+import json
+from collections import defaultdict
 
 import jieba
 import pandas
+from flask import request
 from snownlp import SnowNLP
 
 
-# 选择csv文件
-def select_csv():
-    root = Tk()
-    root.withdraw()  # 实现主窗口隐藏
-    path = tkf.askopenfilename(title="", filetypes=[('csv文件', '.csv')])  # 获得文件路径
-    print("您选择的csv文件是：" + os.path.basename(path))  # 输出文件名
-    return path
+def get_data():
+    # 获取传入的params参数
+    params = request.args.to_dict()
+    path = params.get('path')
 
-
-# 生成关键词文件
-def key_words(filename, limit, method):
-    text = []  # 储存关键词列数据
-    name = os.path.basename(filename).split('.')[0]  # 提取不包含后缀的文件名
-    data = pandas.read_csv(filename, index_col=0)  # 读取csv文件并不带编号
-    if method == "1":
-        for i in range(0, len(data)):
-            text.append(SnowNLP(data.index[i]))  # 将data的第一列（index）数据转换为SnowNLP类型并添加到text数组中
-            text[i] = text[i].keywords(int(limit))  # 将text数组中的数据进行关键词提取并覆盖到原位置
-    data["关键词"] = text  # 将text数组作为新的一列添加到data中
-    data.to_csv("output/" + name + "Key.csv")  # 将data输出为读取的csv文件名加上Key的csv文件
+    data = pandas.read_csv(path, index_col=0)  # 读取csv文件并不带编号
     return data
 
 
-# 生成情绪值文件
-def sentiment_value(filename, method):
-    name = os.path.basename(filename).split('.')[0]  # 提取不包含后缀的文件名
-    data = pandas.read_csv(filename, index_col=0)  # 读取csv文件并不带编号
-    if method == "1":  # 使用snownlp内置方法
-        text = []  # 储存情绪值列数据
-        for i in range(0, len(data)):
-            text.append(SnowNLP(data.index[i]))  # 将data的第一列（index）数据转换为SnowNLP类型并添加到text数组中
-            text[i] = text[i].sentiments  # 将text数组中的数据进行情绪值判断并覆盖到原位置
-        # tkm.showinfo("成功！", "生成情绪值文件成功！")
-    if method == "2":  # 使用玻森情感词典
-        text = []  # 储存情绪值列数据
-        df = pandas.read_table(r"BosonNLP.txt", sep=" ", names=['key', 'score'])  # 加载玻森情感词典
-        key = df['key'].values.tolist()  # 读取词典中的key列
-        score = df['score'].values.tolist()  # 读取词典中的score列
-        for i in range(0, len(data)):
-            segs = jieba.lcut(data.index[i])  # 使用jieba分词对data的每一行数据进行分词
-            score_list = [score[key.index(x)] for x in segs if (x in key)]  # 将分词结果和key进行比对并获得出对应的score
-            text.append(sum(score_list))  # 将每个分词结果的分值相加
-    data["情绪值"] = text  # 将text数组作为新的一列添加到data中
-    data.to_csv("output/" + name + "Sen.csv")  # 将data输出为读取的csv文件名加上Sen的csv文件
-    return data
+# 关键词
+def key_words():
+    result_json = []  # 创建保存数据的list
+    data = get_data()  # 获得csv文件数据
+    # 获取传入的params参数
+    params = request.args.to_dict()
+    limit = params.get('limit')
+
+    for i in range(0, len(data)):
+        temp = {'key': data.index[i], 'score': SnowNLP(data.index[i]).keywords(limit)}  # 将数据保存在一个dict中
+        result_json.append(temp)  # 将dict中的数据添加到list中
+    return json.dumps(result_json, ensure_ascii=False)
+
+
+# 情绪值开始
+
+# jieba分词后去除停用词
+def seg_word(sentence):
+    seg_list = jieba.cut(sentence)
+    seg_result = []
+    for i in seg_list:
+        seg_result.append(i)
+    stopwords = set()
+    with open('method2_stopwords.txt', 'r', encoding='utf-8') as fr:
+        for i in fr:
+            stopwords.add(i.strip())
+    return list(filter(lambda x: x not in stopwords, seg_result))
+
+
+# 找出文本中的情感词、否定词和程度副词
+def classify_words(word_list):
+    # 读取情感词典文件
+    sen_file = open('method2_bosondict.txt', 'r+', encoding='utf-8')
+    # 获取词典文件内容
+    sen_list = sen_file.readlines()
+    # 创建情感字典
+    sen_dict = defaultdict()
+    # 读取词典每一行的内容，将其转换成字典对象，key为情感词，value为其对应的权重
+    for i in sen_list:
+        if len(i.split(' ')) == 2:
+            sen_dict[i.split(' ')[0]] = i.split(' ')[1]
+    # 读取否定词文件
+    not_word_file = open('method2_negativewords.txt', 'r+', encoding='utf-8')
+    not_word_list = not_word_file.readlines()
+    # 读取程度副词文件
+    degree_file = open('method2_degreeadv.txt', 'r+', encoding='utf-8')
+    degree_list = degree_file.readlines()
+    degree_dict = defaultdict()
+    for i in degree_list:
+        degree_dict[i.split(',')[0]] = i.split(',')[1]
+    sen_word = dict()
+    not_word = dict()
+    degree_word = dict()
+    # 分类
+    for i in range(len(word_list)):
+        word = word_list[i]
+        if word in sen_dict.keys() and word not in not_word_list and word not in degree_dict.keys():
+            # 找出分词结果中在情感字典中的词
+            sen_word[i] = sen_dict[word]
+        elif word in not_word_list and word not in degree_dict.keys():
+            # 分词结果中在否定词列表中的词
+            not_word[i] = -1
+        elif word in degree_dict.keys():
+            # 分词结果中在程度副词中的词
+            degree_word[i] = degree_dict[word]
+    # 关闭打开的文件
+    sen_file.close()
+    not_word_file.close()
+    degree_file.close()
+    # 返回分类结果
+    return sen_word, not_word, degree_word
+
+
+# 计算情感词的分数
+def calculate_score(sen_word, not_word, degree_word, seg_result):
+    # 权重初始化为1
+    W = 1
+    score = 0
+    # 情感词下标初始化
+    sentiment_index = -1
+    # 情感词的位置下标集合
+    sentiment_index_list = list(sen_word.keys())
+    # 遍历分词结果
+    temp = 0
+    for i in range(0, len(seg_result)):
+        # 如果是情感词
+        if i in sen_word.keys():
+            # 权重*情感词得分
+            score += W * float(sen_word[i])
+            # print(seg_result[i] + "=" + str(score - temp))
+            temp = score
+            # 情感词下标加一，获取下一个情感词的位置
+            sentiment_index += 1
+            if sentiment_index < len(sentiment_index_list) - 1:
+                # 判断当前的情感词与下一个情感词之间是否有程度副词或否定词
+                for j in range(sentiment_index_list[sentiment_index], sentiment_index_list[sentiment_index + 1]):
+                    # 更新权重，如果有否定词，权重取反
+                    if j in not_word.keys():
+                        W *= -1
+                    elif j in degree_word.keys():
+                        W *= float(degree_word[j])
+        # 定位到下一个情感词
+        if sentiment_index < len(sentiment_index_list) - 1:
+            i = sentiment_index_list[sentiment_index + 1]
+    return score
+
+
+# 计算单个得分
+def sentiment_score(sentence):
+    # 1.对文档分词
+    seg_list = seg_word(sentence)
+    # 2.将分词结果转换成字典，找出情感词、否定词和程度副词
+    sen_word, not_word, degree_word = classify_words(seg_list)
+    # 3.计算得分
+    score = calculate_score(sen_word, not_word, degree_word, seg_list)
+    return score
+
+
+# 汇总所有得分
+def sentiment_scores():
+    result_json = []
+    data = get_data()
+    for i in range(0, len(data)):
+        temp = {'key': data.index[i], 'score': sentiment_score(data.index[i])}
+        result_json.append(temp)
+    return json.dumps(result_json, ensure_ascii=False)
+
+# 情绪值结束
