@@ -1,4 +1,6 @@
 .idea/
 input/
 output/
+training_data/
+trained_model/
 __pycache__/
