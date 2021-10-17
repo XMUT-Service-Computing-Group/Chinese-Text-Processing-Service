@@ -103,7 +103,7 @@ class Sentiment(object):
 Note: if you do not want to add input ~~and output files~~, it is also allowed, but the name parameter cannot be used in
 the URL. You need to use the path parameter and assign it to the path of the complete input ~~and output~~
 files (described in detail below).   
-注意：如果你不想添加input~~和output文件~~也是允许的，但在url中，name参数将无法使用，需要使用path参数，并将它赋值为完整的输入~~和输出~~文件的路径（以下将详细说明）。
+注意：如果你不想添加input~~和output文件~~也是允许的，但在url中，name参数将无法使用，需要使用path参数，并将它赋值为完整的输入~~和输出~~文件的路径。
 
 ###  How to use 如何使用
 
@@ -117,15 +117,20 @@ files (described in detail below).
 
 #### 2.API调用
 
-| URL                                    | Description 说明                                             | parameter 参数                                               |
-| -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| http://127.0.0.1:5000/                 | Redirect to readme interface of GitHub.<br>重定向到github的README界面 |                                                              |
-| http://127.0.0.1:5000/key_words        | Generate keywords.<br>生成关键词                             | **path**<br>Absolute path of the file.<br>文件的绝对路径     |
-|                                        |                                                              | **name**<br/>Name of the file.<br/>文件的文件名              |
-|                                        |                                                              | **limit**<br/>Number limit of keywords.<br/>关键词的数量限制 |
-| http://127.0.0.1:5000/sentiment_train  | Training sentiment score generation model.<br/>训练情绪值生成模型 | **filename**<br/>File name of the training model.<br/>训练模型的文件名 |
-| http://127.0.0.1:5000/sentiment_scores | Generate sentiment score.<br/>生成情绪值                     | **path**<br>Absolute path of the file.<br>文件的绝对路径     |
-|                                        |                                                              | **name**<br/>Name of the file.<br/>文件的文件名              |
-|                                        |                                                              | **method**<br/>Generation mode of sentiment score.<br/>情绪值的生成模式 |
-|                                        |                                                              |                                                              |
+| URL                                             | parameter 参数                                               |
+| ----------------------------------------------- | ------------------------------------------------------------ |
+| http://127.0.0.1:5000/                          |                                                              |
+| http://127.0.0.1:5000/key_words?path=           | **path**<br/>Absolute path of the file.<br/>文件的绝对路径   |
+| http://127.0.0.1:5000/key_words?name=           | **name**<br/>Name of the file.<br/>文件的文件名              |
+| http://127.0.0.1:5000/key_words?limit=          | **limit**<br/>Number limit of keywords.<br/>关键词的数量限制 |
+| http://127.0.0.1:5000/sentiment_train?filename= | **filename**<br/>File name of the training model.<br/>训练模型的文件名 |
+| http://127.0.0.1:5000/sentiment_scores?path=    | **path**<br>Absolute path of the file.<br>文件的绝对路径     |
+| http://127.0.0.1:5000/sentiment_scores?name=    | **name**<br/>Name of the file.<br/>文件的文件名              |
+| http://127.0.0.1:5000/sentiment_scores?method=  | **method**<br/>Generation mode of sentiment score.<br/>情绪值的生成模式 |
+|                                                 |                                                              |
 
+##### Example 范例：
+
+##### http://127.0.0.1:5000/key_words?name=data.csv&limit=3
+
+It means that the keyword of data in data.csv in the input folder is generated under the condition of quantity limit 3, and returned in JSON format.<br>表示以数量限制3为条件，生成位于input文件夹中的data.csv中数据的关键词，并以json的格式返回。
